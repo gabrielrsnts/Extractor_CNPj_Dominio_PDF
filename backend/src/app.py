@@ -13,6 +13,8 @@ app = Flask(__name__)
 frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
 CORS(app, origins=[frontend_url])
 
+print(f"CORS configurado para a origem: {frontend_url}")
+
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
