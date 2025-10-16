@@ -10,7 +10,8 @@ sys.path.append(os.path.dirname(__file__))
 from extractor.processa_pdf import extrair_dados_do_pdf
 
 app = Flask(__name__)
-CORS(app)
+frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+CORS(app, origins=[frontend_url])
 
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
