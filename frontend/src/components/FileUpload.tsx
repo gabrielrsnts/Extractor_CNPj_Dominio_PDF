@@ -1,14 +1,17 @@
-import { Upload, FileText, Download, AlertCircle } from 'lucide-react';
+import { Upload, FileText, Download, AlertCircle, HelpCircle } from 'lucide-react';
 import { useState } from 'react';
-import axios from 'axios'; // <<< MUDANÇA AQUI >>> Importamos o axios
+import axios from 'axios';
 
 export default function FileUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // <<< MUDANÇA AQUI >>> Vamos guardar os dados recebidos da API neste estado
-  const [extractedData, setExtractedData] = useState<{ cnpjs: string[], dominios: string[] } | null>(null);
+  const [extractedData, setExtractedData] = useState<{
+    [x: string]: any; cnpjs: string[], dominios: string[] 
+} | null>(null);
+  
+  // Estado para controlar a visibilidade do modal de ajuda
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -22,11 +25,10 @@ export default function FileUpload() {
 
       setFile(selectedFile);
       setError(null);
-      setExtractedData(null); // Limpa os dados anteriores ao selecionar um novo arquivo
+      setExtractedData(null);
     }
   };
 
-  // <<< MUDANÇA PRINCIPAL #1 >>> Conectando com o Backend
   const handleProcess = async () => {
     if (!file) return;
 
@@ -34,52 +36,49 @@ export default function FileUpload() {
     setError(null);
     setExtractedData(null);
 
-    // FormData é a forma padrão de enviar arquivos para uma API
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-      // Faz a chamada POST para sua API Flask
       const response = await axios.post('http://127.0.0.1:5000/api/extract', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
       
-      // Armazena os dados (ex: { cnpjs: [...], dominios: [...] }) no estado
-      setExtractedData(response.data);
+      // Verifica se a resposta do backend contém um erro
+      if (response.data.erro) {
+        setError(response.data.erro);
+        setExtractedData(null);
+      } else {
+        setExtractedData(response.data);
+      }
       
-    } catch (err) {
+    } catch (err: any) {
       console.error("Erro na comunicação com o backend:", err);
-      setError('Ocorreu um erro ao processar o arquivo. Tente novamente.');
+      // Tenta exibir a mensagem de erro do backend, se disponível
+      const backendError = err.response?.data?.erro || 'Ocorreu um erro ao processar o arquivo. Tente novamente.';
+      setError(backendError);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // <<< MUDANÇA PRINCIPAL #2 >>> Gerando o CSV dinamicamente
   const handleDownload = () => {
-    // Se não houver dados, não faz nada
     if (!extractedData) return;
 
     const { cnpjs, dominios } = extractedData;
-
-    // Define o cabeçalho do CSV. Usar ; como delimitador funciona melhor no Excel em português
     const headers = '"CNPJ";"Dominio"';
-
-    // Combina as listas de CNPJs e domínios em linhas de CSV
     const maxRows = Math.max(cnpjs.length, dominios.length);
     const rows = [];
     for (let i = 0; i < maxRows; i++) {
-      const cnpj = cnpjs[i] || ''; // Pega o CNPJ ou uma string vazia se não houver
-      const dominio = dominios[i] || ''; // Pega o domínio ou uma string vazia
+      const cnpj = cnpjs[i] || '';
+      const dominio = dominios[i] || '';
       rows.push(`"${cnpj}";"${dominio}"`);
     }
     
-    // Junta o cabeçalho e as linhas em um único texto
     const csvContent = [headers, ...rows].join('\n');
     
-    // O resto da sua lógica de download continua a mesma
     const encodedUri = encodeURI('data:text/csv;charset=utf-8,' + csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
@@ -95,15 +94,10 @@ export default function FileUpload() {
     setError(null);
   };
   
-  // O seu JSX continua o mesmo, mas agora a condição para mostrar o botão de download
-  // será baseada no estado 'extractedData' em vez de 'csvReady'.
-  const csvReady = extractedData !== null;
-
-  // ... (o resto do seu código JSX continua exatamente o mesmo aqui)
-  // ... (vou colar para garantir que fique completo)
+  const csvReady = extractedData !== null && !extractedData.erro;
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-4">
+    <div className="w-full max-w-2xl mx-auto px-4 py-8">
       <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-8 shadow-2xl">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-zinc-800 rounded-xl mb-4">
@@ -167,7 +161,7 @@ export default function FileUpload() {
             ) : (
               <button
                 onClick={handleDownload}
-                className="w-full py-3 px-6 bg-white text-black font-medium rounded-lg hover:bg-zinc-200 transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 px-6 bg-green-500 text-black font-medium rounded-lg hover:bg-green-400 transition-all flex items-center justify-center gap-2"
               >
                 <Download className="w-5 h-5" />
                 Baixar CSV
@@ -176,6 +170,71 @@ export default function FileUpload() {
           </div>
         )}
       </div>
+
+      {/* --- BOTÃO PARA ABRIR O MODAL DE AJUDA --- */}
+      <div className="text-center mt-6">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+        >
+          <HelpCircle className="w-5 h-5" />
+          Como funciona? Guia de Uso
+        </button>
+      </div>
+
+      {/* --- COMPONENTE DO MODAL --- */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="bg-zinc-900 rounded-2xl border border-zinc-800 p-8 shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-2xl font-bold text-white mb-4">Guia de Uso: Preparando seu PDF</h2>
+            <p className="text-zinc-400 mb-6">
+              Para garantir o sucesso da extração, seu PDF deve seguir 4 regras simples de formatação e estrutura.
+            </p>
+
+            <div className="space-y-6 text-zinc-300">
+              <div>
+                <h3 className="font-semibold text-white mb-2">1. O PDF deve ser baseado em Texto (Não uma imagem)</h3>
+                <p>✅ **Correto:** Você consegue abrir o PDF e selecionar as palavras e números com o cursor do mouse.</p>
+                <p>❌ **Incorreto:** O PDF é um documento escaneado. Se você só consegue desenhar uma caixa de seleção sobre o conteúdo, o sistema não conseguirá ler.</p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-white mb-2">2. O CNPJ deve estar no Formato Padrão</h3>
+                <p>O sistema reconhece o formato oficial de CNPJ com pontuação.</p>
+                <p>✅ **Correto:** <code>12.345.678/0001-99</code></p>
+                <p>❌ **Incorreto:** <code>12345678000199</code> (sem pontuação)</p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-white mb-2">3. Os Domínios devem estar em Letras Minúsculas</h3>
+                <p>Para evitar extrair "Marcas" ou outros textos por engano, apenas domínios em minúsculas são reconhecidos.</p>
+                <p>✅ **Correto:** <code>meusite.com.br</code>, <code>exemplo.net</code></p>
+                <p>❌ **Incorreto:** <code>MeuSite.com.br</code>, <code>EXEMPLO.NET</code></p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-white mb-2">4. A Regra de Ouro: O CNPJ Sempre Primeiro</h3>
+                <p>O sistema lê de cima para baixo. Para que um domínio seja associado a um CNPJ, o CNPJ deve aparecer antes ou na mesma linha que os domínios pertencentes a ele.</p>
+              </div>
+            </div>
+
+            <div className="mt-8 text-right">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="py-2 px-5 bg-white text-black font-medium rounded-lg hover:bg-zinc-200 transition-all"
+              >
+                Entendi, fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

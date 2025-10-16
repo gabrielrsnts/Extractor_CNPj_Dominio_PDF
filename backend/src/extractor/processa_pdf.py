@@ -1,5 +1,3 @@
-# backend/extrator/processa_pdf.py
-
 import re
 import fitz  # PyMuPDF
 import traceback
@@ -28,11 +26,9 @@ def extrair_dados_do_pdf(caminho_do_arquivo: str) -> dict:
                     if match_cnpj:
                         ultimo_cnpj_visto = match_cnpj.group(0)
 
-                    # <<< MUDANÇA #1: REGEX SÓ COM MINÚSCULAS >>>
                     # Agora o padrão exige que todas as letras sejam minúsculas.
                     regex_dominios = r'\b(?:[a-z0-9-]+\.)+[a-z]{2,}\b'
                     
-                    # <<< MUDANÇA #2: REMOÇÃO DO IGNORECASE >>>
                     # A busca agora é sensível a maiúsculas, aplicando a regra acima.
                     dominios_encontrados = re.findall(regex_dominios, texto_bloco)
                     
@@ -43,7 +39,6 @@ def extrair_dados_do_pdf(caminho_do_arquivo: str) -> dict:
                         for dominio in dominios_encontrados:
                             if not dominio.endswith(extensoes_ignoradas):
                                 cnpjs_finais.append(ultimo_cnpj_visto)
-                                # A chamada .lower() é mantida como garantia de padronização
                                 dominios_finais.append(dominio.strip().lower())
         
         return {

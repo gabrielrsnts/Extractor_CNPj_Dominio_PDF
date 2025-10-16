@@ -1,16 +1,12 @@
-# backend/app.py
-
 import os
 import sys
-import traceback # <<< MUDANÇA #1: Importar o traceback aqui
+import traceback 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 # Garantir que o diretório do arquivo esteja no sys.path para resolver imports locais
 sys.path.append(os.path.dirname(__file__))
-
-# Import correto do módulo dentro de `src/extractor`
 from extractor.processa_pdf import extrair_dados_do_pdf
 
 app = Flask(__name__)
@@ -22,7 +18,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/api/extract', methods=['POST'])
 def upload_file():
-    # <<< MUDANÇA #2: Adicionar o bloco try...except aqui >>>
     try:
         if 'file' not in request.files:
             return jsonify({"erro": "Nenhum arquivo enviado"}), 400
@@ -51,12 +46,10 @@ def upload_file():
         return jsonify({"erro": "Falha genérica no upload"}), 500
 
     except Exception as e:
-        # Se QUALQUER coisa der errado dentro do 'try', este código será executado
         print("--- OCORREU UM ERRO DETALHADO NO APP.PY ---")
-        traceback.print_exc() # Imprime o erro completo e detalhado
+        traceback.print_exc()
         print("-----------------------------------------")
         return jsonify({"erro": f"Erro interno no servidor: {e}"}), 500
 
 if __name__ == '__main__':
-    # Rodar com debug=True diretamente no código é uma alternativa
     app.run(debug=True, port=5000)
