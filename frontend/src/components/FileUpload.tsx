@@ -47,7 +47,7 @@ export default function FileUpload() {
     formData.append('file', file);
 
     try {
-      const apiUrl = process.env.VITE_API_URL || 'http://127.0.0.1:5000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
       const response = await axios.post(`${apiUrl}/api/extract`, formData,{
         headers: {
           'Content-Type': 'multipart/form-data',
