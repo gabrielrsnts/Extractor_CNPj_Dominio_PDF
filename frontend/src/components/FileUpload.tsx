@@ -1,4 +1,5 @@
 import { Upload, FileText, Download, AlertCircle, HelpCircle } from 'lucide-react';
+import {  useEffect } from 'react';
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -28,6 +29,12 @@ export default function FileUpload() {
       setExtractedData(null);
     }
   };
+
+  // <<< ADICIONE ESTE BLOCO DE CÓDIGO PARA DIAGNÓSTICO >>>
+  useEffect(() => {
+    // Esta linha irá imprimir o valor da variável de ambiente no console do navegador assim que a página carregar.
+    console.log("Variável de ambiente REACT_APP_API_URL vista pelo código:", process.env.REACT_APP_API_URL);
+  }, []); // O [] vazio garante que isso rode apenas uma vez
 
   const handleProcess = async () => {
     if (!file) return;
