@@ -33,7 +33,7 @@ export default function FileUpload() {
   // <<< ADICIONE ESTE BLOCO DE CÓDIGO PARA DIAGNÓSTICO >>>
   useEffect(() => {
     // Esta linha irá imprimir o valor da variável de ambiente no console do navegador assim que a página carregar.
-    console.log("Variável de ambiente VITE_API_URL vista pelo código:", process.env.VITE_API_URL);
+    console.log("Variável de ambiente VITE_API_URL vista pelo código:", import.meta.env.VITE_API_URL);
   }, []); // O [] vazio garante que isso rode apenas uma vez
 
   const handleProcess = async () => {
