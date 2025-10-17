@@ -4,7 +4,7 @@ Uma aplicação web full-stack que extrai CNPJs e domínios de arquivos PDF, ass
 
 ### ✨ [Acesse a Aplicação Online Clicando Aqui!](https://extractor-cn-pj-dominio-pdf.vercel.app/) ✨
 
-![Captura de Tela da Aplicação]()
+![Captura de Tela da Aplicação](img.jpeg)
 ---
 
 ## 📄 Sobre o Projeto
