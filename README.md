@@ -1,132 +1,122 @@
-# EAD - Linguagens Formais e Autômatos
+# 🚀 Extrator de CNPJs e Domínios de PDF
 
-Aplicação full-stack que extrai CNPJs e domínios de PDFs via API Flask e uma UI em React.
+Uma aplicação web full-stack que extrai CNPJs e domínios de arquivos PDF, associando-os corretamente e permitindo o download dos resultados em formato CSV.
 
-## 🚀 Funcionalidades
+### ✨ [Acesse a Aplicação Online Clicando Aqui!](https://extractor-cn-pj-dominio-pdf.vercel.app/) ✨
 
-- **Extração inteligente de PDFs**: Usa PyMuPDF para processar PDFs com texto selecionável
-- **Detecção automática de CNPJ**: Regex específico para formato brasileiro (XX.XXX.XXX/XXXX-XX)
-- **Extração de domínios**: Filtragem inteligente para evitar falsos positivos
-- **Interface moderna**: UI responsiva com React + Tailwind CSS
-- **API RESTful**: Endpoint `/api/extract` para processamento de arquivos
+![Captura de Tela da Aplicação]()
+---
 
-## 📁 Estrutura do Projeto
-```
-├── backend/           # API Flask
-│   ├── src/
-│   │   ├── app.py     # Servidor principal
-│   │   └── extractor/
-│   │       └── processa_pdf.py  # Lógica de extração
-│   └── venv/          # Ambiente virtual Python
-├── frontend/          # Interface React
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── FileUpload.tsx   # Componente de upload
-│   │   │   └── Footer.tsx       # Rodapé
-│   │   └── App.tsx    # Componente principal
-│   └── package.json
-└── README.md
-```
+## 📄 Sobre o Projeto
 
-## ⚙️ Requisitos
-- **Python 3.11+**
-- **Node.js 18+**
-- **Java JRE/JDK 8+** (opcional, para fallback com Tabula)
+Este projeto foi desenvolvido para solucionar a necessidade de extrair dados estruturados (CNPJs e domínios) de documentos PDF, onde a estrutura de tabela nem sempre é confiável. A aplicação utiliza um backend em Python para processar o arquivo e um frontend moderno em React para a interação com o usuário.
 
-## 🛠️ Instalação e Execução
+### Funcionalidades Principais
 
-### Backend (API Flask)
+* **Upload de Arquivos:** Interface simples para o usuário enviar um arquivo PDF.
+* **Extração Inteligente:** O backend lê o PDF bloco por bloco, garantindo a extração de dados mesmo em layouts complexos.
+* **Reconhecimento de Padrões:**
+    * Identifica CNPJs no formato padrão (`XX.XXX.XXX/XXXX-XX`).
+    * Identifica domínios de qualquer tipo (`.com`, `.com.br`, etc.), desde que estejam em letras minúsculas.
+* **Associação Correta:** A lógica do backend associa corretamente múltiplos domínios a um único CNPJ, respeitando a ordem de leitura do documento.
+* **Download em CSV:** Gera e permite o download de um arquivo `.csv` com os dados extraídos, pronto para ser usado em planilhas.
 
-1) **Navegar para o diretório e ativar ambiente virtual:**
-```powershell
-cd backend
-python -m venv venv
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-./venv/Scripts/Activate.ps1
-```
+## 🛠️ Tecnologias Utilizadas
 
-2) **Instalar dependências:**
-```powershell
-pip install flask flask-cors PyMuPDF pandas
-```
+Este projeto é dividido em duas partes principais:
 
-3) **Executar a API:**
-```powershell
-python ./src/app.py
-```
-- **API disponível em:** `http://localhost:5000`
-- **Endpoint:** `POST /api/extract`
+* **Frontend:**
+    * [React](https://reactjs.org/) (com [Vite](https://vitejs.dev/))
+    * [TypeScript](https://www.typescriptlang.org/)
+    * [Axios](https://axios-http.com/) para as requisições HTTP
+    * [Tailwind CSS](https://tailwindcss.com/) para estilização
 
-### Frontend (React + Vite)
+* **Backend:**
+    * [Python](https://www.python.org/)
+    * [Flask](https://flask.palletsprojects.com/) como framework web
+    * [PyMuPDF](https://pymupdf.readthedocs.io/en/latest/) para extração de texto do PDF
+    * [Gunicorn](https://gunicorn.org/) como servidor WSGI para produção
 
-1) **Navegar para o diretório e instalar dependências:**
-```bash
-cd frontend
-npm install
-```
+* **Deploy:**
+    * Backend deployado no [Render](https://render.com/).
+    * Frontend deployado na [Vercel](https://vercel.com/).
 
-2) **Executar em modo de desenvolvimento:**
-```bash
-npm run dev
-```
-- **Interface disponível em:** `http://localhost:5173`
+---
 
-## 🔧 Como Usar
+## ⚙️ Como Rodar o Projeto Localmente
 
-1. **Acesse a interface web** em `http://localhost:5173`
-2. **Selecione um arquivo PDF** com texto selecionável
-3. **Clique em "Extrair Dados"** para processar
-4. **Visualize os resultados** com CNPJs e domínios extraídos
-5. **Baixe os dados** em formato CSV se necessário
+Caso queira testar, modificar ou contribuir com o projeto, siga os passos abaixo para executá-lo em sua máquina.
 
-## 📋 Tecnologias Utilizadas
+### Pré-requisitos
 
-### Backend
-- **Flask**: Framework web Python
-- **PyMuPDF (fitz)**: Processamento de PDFs
-- **Pandas**: Manipulação de dados
-- **Flask-CORS**: Cross-origin resource sharing
+* [Git](https://git-scm.com/)
+* [Node.js e npm](https://nodejs.org/en/)
+* [Python 3](https://www.python.org/downloads/)
 
-### Frontend
-- **React 18**: Biblioteca de interface
-- **TypeScript**: Tipagem estática
-- **Tailwind CSS**: Framework CSS
-- **Vite**: Build tool e dev server
-- **Axios**: Cliente HTTP
+### Passo a Passo
 
-## 🐛 Solução de Problemas
+1.  **Clone o repositório:**
+    ```bash
+    git clone <url-do-repositorio>
+    cd Extractor_CNPj_Dominio_PDF
+    ```
 
-### Erro "Nenhuma tabela encontrada no PDF"
-- **Causa**: PDF pode ser escaneado (imagem) ou ter layout incomum
-- **Solução**: Use PDFs com texto selecionável ou converta para texto
+2.  **Configure e rode o Backend:**
+    * Abra um terminal na pasta do projeto.
+    * Navegue até a pasta do backend:
+        ```bash
+        cd backend
+        ```
+    * Crie e ative um ambiente virtual:
+        ```bash
+        # Criar o ambiente
+        python -m venv venv
 
-### Erro de importação de módulos
-- **Causa**: Ambiente virtual não ativado
-- **Solução**: Ative o venv com `./venv/Scripts/Activate.ps1`
+        # Ativar no Windows
+        .\venv\Scripts\activate
 
-### Erro de dependências Python
-- **Causa**: Pacotes não instalados
-- **Solução**: Execute `pip install -r requirements.txt` (se disponível)
+        # Ativar no macOS/Linux
+        source venv/bin/activate
+        ```
+    * Instale as dependências:
+        ```bash
+        pip install -r requirements.txt
+        ```
+    * Inicie o servidor Flask:
+        ```bash
+        flask run
+        ```
+    * O backend estará rodando em `http://127.0.0.1:5000`. Deixe este terminal aberto.
 
-## 📝 Changelog
+3.  **Configure e rode o Frontend:**
+    * Abra um **novo terminal** na pasta raiz do projeto.
+    * Navegue até a pasta do frontend:
+        ```bash
+        cd frontend
+        ```
+    * Instale as dependências:
+        ```bash
+        npm install
+        ```
+    * Inicie a aplicação React:
+        ```bash
+        npm run dev
+        ```
+    * A aplicação abrirá automaticamente no seu navegador, geralmente em `http://localhost:5173` (ou outra porta indicada pelo Vite).
 
-### v2.0.0 (Atual)
-- ✅ Substituição do Tabula por PyMuPDF
-- ✅ Melhoria na detecção de CNPJ e domínios
-- ✅ Tratamento de erro robusto
-- ✅ Interface de usuário aprimorada
-- ✅ Documentação atualizada
+Agora você está pronto para testar a aplicação localmente!
 
-### v1.0.0
-- ✅ Implementação inicial com Tabula
-- ✅ API Flask básica
-- ✅ Interface React simples
+---
 
-## 📄 Licença
-MIT License - veja o arquivo [LICENSE](LICENSE) para detalhes.
+## ⚖️ Licença e Contribuição
 
-## 👥 Contribuição
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
+Este é um projeto de código aberto, liberado para toda a comunidade de desenvolvedores. Você pode usar, modificar e distribuir o código livremente.
 
-## 📞 Suporte
-Para dúvidas ou problemas, abra uma issue no repositório GitHub.
+A única coisa que peço em troca é o **crédito ao autor original** caso você utilize este projeto ou partes dele em seus próprios trabalhos. Uma menção com um link para um dos meus perfis já é o suficiente.
+
+## 👨‍💻 Autor
+
+Feito com ❤️ por **Gabriel Rodrigues Santos**.
+
+* **LinkedIn:** [https://www.linkedin.com/in/gabrielrsnts](https://www.linkedin.com/in/gabrielrsnts)
+* **GitHub:** [https://github.com/gabrielrsnts](https://github.com/gabrielrsnts)
