@@ -8,4 +8,4 @@ services:
       - url: https://github.com/heroku/heroku-buildpack-jvm-common
       - url: heroku/python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn --worker-tmp-dir /dev/shm app:app"
+    startCommand: "gunicorn --worker-tmp-dir /dev/shm src.app:app"
