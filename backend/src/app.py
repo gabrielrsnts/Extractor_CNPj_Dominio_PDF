@@ -11,9 +11,9 @@ from extractor.processa_pdf import extrair_dados_do_pdf
 
 app = Flask(__name__)
 frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-CORS(app, origins=[frontend_url])
+CORS(app, origins="*") # Permite TODAS as origens (APENAS PARA TESTE)
 
-print(f"CORS configurado para a origem: {frontend_url}")
+print("!!! MODO DE DEBUG: CORS configurado para aceitar TODAS as origens !!!")
 
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
