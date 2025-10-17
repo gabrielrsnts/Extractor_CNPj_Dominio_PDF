@@ -33,7 +33,7 @@ export default function FileUpload() {
   // <<< ADICIONE ESTE BLOCO DE CÓDIGO PARA DIAGNÓSTICO >>>
   useEffect(() => {
     // Esta linha irá imprimir o valor da variável de ambiente no console do navegador assim que a página carregar.
-    console.log("Variável de ambiente REACT_APP_API_URL vista pelo código:", process.env.REACT_APP_API_URL);
+    console.log("Variável de ambiente VITE_API_URL vista pelo código:", process.env.VITE_API_URL);
   }, []); // O [] vazio garante que isso rode apenas uma vez
 
   const handleProcess = async () => {
@@ -47,7 +47,7 @@ export default function FileUpload() {
     formData.append('file', file);
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://127.0.0.1:5000';
+      const apiUrl = process.env.VITE_API_URL || 'http://127.0.0.1:5000';
       const response = await axios.post(`${apiUrl}/api/extract`, formData,{
         headers: {
           'Content-Type': 'multipart/form-data',
