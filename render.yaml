@@ -1,21 +1,11 @@
-# Arquivo de configuração para o Render
 services:
-  # Define o nosso serviço de backend
   - type: web
     name: extrator-pdf-backend
     env: python
-    # Especifica o plano gratuito
     plan: free
-    # Aponta para a pasta correta no seu monorepo
     rootDir: backend
-    
-    # A MÁGICA ESTÁ AQUI: Lista os buildpacks que queremos instalar
     buildpacks:
-      # Primeiro, o buildpack para instalar o Java (OpenJDK)
       - url: https://github.com/heroku/heroku-buildpack-jvm-common
-      # Segundo, o buildpack padrão do Python, que é necessário quando usamos buildpacks customizados
       - url: heroku/python
-      
-    # Comandos para construir e iniciar a aplicação
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn --worker-tmp-dir /dev/shm app:app"
